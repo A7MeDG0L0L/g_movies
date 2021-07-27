@@ -41,3 +41,5 @@ class GetComingSoonErrorState extends MoviesStates {
 
   GetComingSoonErrorState(this.error);
 }
+
+class GetAllDataSuccessfully extends MoviesStates {}

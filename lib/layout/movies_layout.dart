@@ -2,6 +2,7 @@ import 'package:expandable/expandable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_conditional_rendering/conditional.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:g_movies/models/movies_model.dart';
 import 'package:g_movies/modules/top_rated_screen.dart';
@@ -24,11 +25,16 @@ class MoviesLayout extends StatelessWidget {
       child: BlocConsumer<MoviesCubit, MoviesStates>(
         listener: (context, state) {},
         builder: (context, state) {
+          // MoviesCubit.get(context).topRated=[];
           if (state is GetTopRatedLoadingState ||
-              state is GetPopularLoadingState) {
+              state is GetPopularLoadingState ||
+              state is GetComingSoonLoadingState ||
+              state is GetNowPlayingLoadingState) {
             return Container(child: Center(child: CircularProgressIndicator()));
           } else if (state is GetTopRatedErrorState ||
-              state is GetPopularErrorState) {
+              state is GetPopularErrorState ||
+              state is GetComingSoonLoadingState ||
+              state is GetNowPlayingLoadingState) {
             Fluttertoast.showToast(
               msg: 'Error :(',
               backgroundColor: Colors.red,
@@ -96,17 +102,27 @@ class MoviesLayout extends StatelessWidget {
                           expanded: SizedBox(
                             width: double.infinity,
                             height: 200,
-                            child: ListView.separated(
-                              shrinkWrap: true,
-                              scrollDirection: Axis.horizontal,
-                              itemBuilder: (context, index) => movieItem(
-                                  MoviesCubit.get(context)
-                                      .topRated!
-                                      .results[index]),
-                              separatorBuilder: (context, index) => SizedBox(
-                                width: 10,
+                            child: Conditional.single(
+                              context: context,
+                              conditionBuilder: (context) =>
+                                  MoviesCubit.get(context).topRated != null,
+                              widgetBuilder: (context) => ListView.separated(
+                                shrinkWrap: true,
+                                scrollDirection: Axis.horizontal,
+                                itemBuilder: (context, index) => movieItem(
+                                    MoviesCubit.get(context)
+                                        .topRated!
+                                        .results[index]),
+                                separatorBuilder: (context, index) => SizedBox(
+                                  width: 10,
+                                ),
+                                itemCount: MoviesCubit.get(context)
+                                    .topRated!
+                                    .results
+                                    .length,
                               ),
-                              itemCount: 20,
+                              fallbackBuilder: (context) =>
+                                  Center(child: CircularProgressIndicator()),
                             ),
                           ),
                         ),
@@ -171,7 +187,8 @@ class MoviesLayout extends StatelessWidget {
                           separatorBuilder: (context, index) => SizedBox(
                             width: 10,
                           ),
-                          itemCount: 20,
+                          itemCount:
+                              MoviesCubit.get(context).popular!.results.length,
                         ),
                       ),
                     ),
@@ -208,18 +225,25 @@ class MoviesLayout extends StatelessWidget {
                       expanded: SizedBox(
                         width: double.infinity,
                         height: 200,
-                        child: ListView.separated(
-                          shrinkWrap: true,
-                          scrollDirection: Axis.horizontal,
-                          itemBuilder: (context, index) => movieItem(
-                              MoviesCubit.get(context)
-                                  .comingSoon!
-                                  .results[index]),
-                          separatorBuilder: (context, index) => SizedBox(
-                            width: 10,
-                          ),
-                          itemCount: 20,
-                        ),
+                        child: Conditional.single(
+                            context: context,
+                            conditionBuilder: (context) =>
+                                MoviesCubit.get(context).popular != null,
+                            widgetBuilder: (context) => ListView.separated(
+                                  shrinkWrap: true,
+                                  scrollDirection: Axis.horizontal,
+                                  itemBuilder: (context, index) => movieItem(
+                                      MoviesCubit.get(context)
+                                          .comingSoon!
+                                          .results[index]),
+                                  separatorBuilder: (context, index) =>
+                                      SizedBox(
+                                    width: 10,
+                                  ),
+                                  itemCount: 20,
+                                ),
+                            fallbackBuilder: (context) =>
+                                Center(child: CircularProgressIndicator())),
                       ),
                     ),
                     SizedBox(
@@ -253,21 +277,27 @@ class MoviesLayout extends StatelessWidget {
                         height: 2,
                       ),
                       expanded: SizedBox(
-                        width: double.infinity,
-                        height: 200,
-                        child: ListView.separated(
-                          shrinkWrap: true,
-                          scrollDirection: Axis.horizontal,
-                          itemBuilder: (context, index) => movieItem(
-                              MoviesCubit.get(context)
-                                  .nowPlaying!
-                                  .results[index]),
-                          separatorBuilder: (context, index) => SizedBox(
-                            width: 10,
-                          ),
-                          itemCount: 20,
-                        ),
-                      ),
+                          width: double.infinity,
+                          height: 200,
+                          child: Conditional.single(
+                            context: context,
+                            conditionBuilder: (context) =>
+                                MoviesCubit.get(context).nowPlaying != null,
+                            widgetBuilder: (context) => ListView.separated(
+                              shrinkWrap: true,
+                              scrollDirection: Axis.horizontal,
+                              itemBuilder: (context, index) => movieItem(
+                                  MoviesCubit.get(context)
+                                      .nowPlaying!
+                                      .results[index]),
+                              separatorBuilder: (context, index) => SizedBox(
+                                width: 10,
+                              ),
+                              itemCount: 20,
+                            ),
+                            fallbackBuilder: (context) =>
+                                Center(child: CircularProgressIndicator()),
+                          )),
                     ),
                   ],
                 ),

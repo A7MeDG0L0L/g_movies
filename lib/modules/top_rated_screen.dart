@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_conditional_rendering/conditional.dart';
 import 'package:g_movies/models/movies_model.dart';
 import 'package:g_movies/shared/cubit/cubit.dart';
 import 'package:g_movies/shared/cubit/states.dart';
@@ -31,8 +32,16 @@ class TopRatedScreen extends StatelessWidget {
               crossAxisCount: 2,
               children: List.generate(
                 20,
-                (index) => buildGridProduct(
-                    MoviesCubit.get(context).topRated!.results[index], context),
+                (index) => Conditional.single(
+                  context: context,
+                  conditionBuilder: (context) =>
+                      MoviesCubit.get(context).topRated != null,
+                  widgetBuilder: (context) => buildGridProduct(
+                      MoviesCubit.get(context).topRated!.results[index],
+                      context),
+                  fallbackBuilder: (context) =>
+                      Center(child: CircularProgressIndicator()),
+                ),
               ),
             ),
           );

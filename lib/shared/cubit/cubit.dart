@@ -17,8 +17,10 @@ class MoviesCubit extends Cubit<MoviesStates> {
       url: topRatedMovies,
     ).then((value) {
       topRated = MoviesModel.fromJson(value.data);
+      printFullText(topRated.toString());
       //print(value.data.toString());
-      print(topRated!.results);
+      // print(topRated.results);
+      // print(topRated.results.length);
       emit(GetTopRatedSuccessState());
     }).catchError((error) {
       print(error);
@@ -35,7 +37,7 @@ class MoviesCubit extends Cubit<MoviesStates> {
     ).then((value) {
       popular = MoviesModel.fromJson(value.data);
       //print(value.data.toString());
-      print(popular!.results);
+      // print(popular!.results);
       emit(GetPopularSuccessState());
     }).catchError((error) {
       print(error);
@@ -52,8 +54,8 @@ class MoviesCubit extends Cubit<MoviesStates> {
     ).then((value) {
       nowPlaying = MoviesModel.fromJson(value.data);
       //print(value.data.toString());
-      print(nowPlaying!.results);
-      print(nowPlaying!.results.length);
+      // print(nowPlaying!.results);
+      // print(nowPlaying!.results.length);
       emit(GetNowPlayingSuccessState());
     }).catchError((error) {
       print(error);
@@ -68,9 +70,10 @@ class MoviesCubit extends Cubit<MoviesStates> {
     DioHelper.getData(
       url: upComingMovies,
     ).then((value) {
-      topRated = MoviesModel.fromJson(value.data);
+      comingSoon = MoviesModel.fromJson(value.data);
       //print(value.data.toString());
-      print(topRated!.results);
+      // print(comingSoon!.results);
+      // print(comingSoon!.results.length);
       emit(GetComingSoonSuccessState());
     }).catchError((error) {
       print(error);
@@ -81,5 +84,9 @@ class MoviesCubit extends Cubit<MoviesStates> {
   void printFullText(String text) {
     final pattern = RegExp('.{1,800}'); // 800 is the size of each chunk
     pattern.allMatches(text).forEach((match) => print(match.group(0)));
+  }
+
+  void getAllDataSuccessfully() {
+    emit(GetAllDataSuccessfully());
   }
 }

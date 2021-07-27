@@ -1,14 +1,13 @@
 // To parse this JSON data, do
 //
-//     final topRatedModel = topRatedModelFromJson(jsonString);
+//     final moviesModel = moviesModelFromJson(jsonString);
 
-import 'package:meta/meta.dart';
 import 'dart:convert';
 
-MoviesModel topRatedModelFromJson(String str) =>
+MoviesModel moviesModelFromJson(String str) =>
     MoviesModel.fromJson(json.decode(str));
 
-String topRatedModelToJson(MoviesModel data) => json.encode(data.toJson());
+String moviesModelToJson(MoviesModel data) => json.encode(data.toJson());
 
 class MoviesModel {
   MoviesModel({
